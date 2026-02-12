@@ -1,86 +1,245 @@
-# Lab 2: SQL DML (Data Manipulation Language)
+# Lab 2: Basic Operations & SQL DML
+
+## 📚 รายละเอียด Lab
+
+Lab นี้แบ่งออกเป็น 2 ส่วนหลัก:  
+**ส่วนที่ 1** - Basic Operations (พีชคณิตเชิงสัมพันธ์) → [01-basic-operations.md](01-basic-operations.md)  
+**ส่วนที่ 2** - SQL DML (Data Manipulation Language) ขั้นสูง → [02-sql-dml-advanced.md](02-sql-dml-advanced.md)
+
+## 📁 โครงสร้างไฟล์
+
+```
+lab2/
+├── README.md                      # ไฟล์นี้ - ภาพรวมและคู่มือ
+├── 01-basic-operations.md         # ส่วนที่ 1: พีชคณิตเชิงสัมพันธ์
+├── 02-sql-dml-advanced.md         # ส่วนที่ 2: SQL DML ขั้นสูง
+└── img/                           # โฟลเดอร์รูปภาพประกอบผลลัพธ์
+    ├── image.png
+    ├── image-1.png
+    └── ...
+```
 
 ## Overview
-This lab covers **SQL DML (Data Manipulation Language)** operations, which are fundamental SQL commands used to retrieve, insert, update, and delete data from database tables. This lab is based on the SQL DML concepts from the [COS3103 Database Course](https://luckkrit.github.io/cos3103/slides/2_68/sql_dml).
 
-## What is SQL DML?
+Lab นี้ครอบคลุม:
+- **พีชคณิตเชิงสัมพันธ์ (Relational Algebra)** และการแปลงเป็น SQL
+- **SQL DML (Data Manipulation Language)** ที่ใช้จัดการข้อมูลในฐานข้อมูล
+- การใช้คำสั่ง SELECT, WHERE, JOIN, Aggregate Functions, และอื่นๆ
 
-SQL DML refers to commands that manipulate data in a database. Key DML operations include:
+### 🔗 Quick Navigation
 
-- **SELECT** - Retrieve data from tables
-- **INSERT** - Add new rows to tables
-- **UPDATE** - Modify existing data
-- **DELETE** - Remove rows from tables
+| เอกสาร | เนื้อหา | ระดับ |
+|--------|---------|-------|
+| [01-basic-operations.md](01-basic-operations.md) | พีชคณิตเชิงสัมพันธ์ 7 operations | ⭐ พื้นฐาน |
+| [02-sql-dml-advanced.md](02-sql-dml-advanced.md) | SQL DML ขั้นสูง (12 หัวข้อ) | ⭐⭐ ขั้นสูง |
 
-## Database Setup
+---
 
-### Prerequisites
-Before starting this lab, you need to have:
-1. **PostgreSQL** installed ([Download PostgreSQL](https://www.postgresql.org/download/))
-2. **PostGIS Extension** (Optional for spatial data)
+## ส่วนที่ 1: Basic Operations (พีชคณิตเชิงสัมพันธ์)
 
-### Setting Up the Database
+📖 **อ่านเนื้อหาเต็ม**: [01-basic-operations.md](01-basic-operations.md)
 
-#### 1. Enable PostGIS Extension
+### เนื้อหาที่ครอบคลุม
+
+| Operation | สัญลักษณ์ | SQL Command | ความหมาย |
+|-----------|-----------|-------------|----------|
+| **Select** | σ | WHERE | เลือกแถว (tuple) ตามเงื่อนไข |
+| **Project** | ∏ | SELECT columns | เลือกเฉพาะคอลัมน์ที่ต้องการ |
+| **Union** | ∪ | UNION | รวมผลลัพธ์จาก 2 ตาราง (ไม่ซ้ำ) |
+| **Intersection** | ∩ | INTERSECT | ข้อมูลที่อยู่เหมือนกันทั้งสองตาราง |
+| **Set Difference** | − | EXCEPT | ข้อมูลที่อยู่ในตารางแรกแต่ไม่ในตารางที่สอง |
+| **Rename** | ρ | AS | เปลี่ยนชื่อตารางหรือคอลัมน์ |
+| **Cartesian Product** | × | CROSS JOIN | จับคู่ทุกแถวของทั้งสองตาราง |
+
+### ตัวอย่างการใช้งาน
+
 ```sql
-CREATE EXTENSION postgis;
+-- Select: เลือกแถวตามเงื่อนไข
+SELECT * FROM student WHERE dept = 'CS';
+
+-- Project: เลือกเฉพาะคอลัมน์
+SELECT sname, dept FROM student;
+
+-- Union: รวมผลลัพธ์
+SELECT sname FROM student WHERE dept = 'CS'
+UNION
+SELECT sname FROM student WHERE dept = 'Math';
+
+-- Intersection: ข้อมูลที่ซ้ำกัน
+SELECT sid FROM student WHERE dept = 'CS'
+INTERSECT
+SELECT sid FROM enroll WHERE cid = 'C1';
 ```
 
-#### 2. Load Classic Models Schema
-Download and execute the classic models database schema:
+---
+
+## ส่วนที่ 2: SQL DML ขั้นสูง
+
+📖 **อ่านเนื้อหาเต็ม**: [02-sql-dml-advanced.md](02-sql-dml-advanced.md)
+
+### What is SQL DML?
+
+SQL DML (Data Manipulation Language) คือคำสั่งที่ใช้จัดการข้อมูลในฐานข้อมูล ประกอบด้วย:
+
+- **SELECT** - ดึงข้อมูลจากตาราง
+- **INSERT** - เพิ่มแถวใหม่
+- **UPDATE** - แก้ไขข้อมูลที่มีอยู่
+- **DELETE** - ลบแถว
+
+### เนื้อหาที่ครอบคลุม
+
+#### 2.1 SELECT ขั้นสูง
+- DISTINCT - ตัดค่าซ้ำ
+- LIMIT - จำกัดจำนวนแถว
+- ฟังก์ชันสตริง: UPPER, LOWER, CONCAT, REVERSE, LPAD, RPAD
+- Boolean Expression
+
+#### 2.2 CAST - แปลงชนิดข้อมูล
 ```sql
--- Download from: https://luckkrit.github.io/cos3103/sql/postgresql-classicmodels.sql
+SELECT CAST(officeCode AS INTEGER) FROM employees;
+-- หรือ
+SELECT officeCode::INTEGER FROM employees;
+```
+
+#### 2.3 WHERE และตัวดำเนินการ
+- ตัวเปรียบเทียบ: `=`, `<>`, `<`, `>`, `<=`, `>=`
+- LIKE, ILIKE - ค้นหาแบบแพทเทิร์น (`%`, `_`)
+- IS NULL / IS NOT NULL
+- BETWEEN - ช่วงค่า
+- IN / NOT IN - เช็คค่าในลิสต์
+
+#### 2.4 Aggregate Functions
+- COUNT(*) - นับทั้งหมด
+- SUM() - รวมค่า
+- AVG() - ค่าเฉลี่ย
+- MAX() / MIN() - ค่าสูงสุด/ต่ำสุด
+
+#### 2.5 GROUP BY และ HAVING
+- **GROUP BY** - จัดกลุ่มข้อมูล
+- **HAVING** - กรองกลุ่มหลังจัดกลุ่ม (ใช้กับ Aggregate Functions)
+- **ORDER BY** - เรียงลำดับผลลัพธ์
+
+```sql
+SELECT status, COUNT(*) AS total_orders
+FROM orders
+GROUP BY status
+HAVING COUNT(*) > 5
+ORDER BY total_orders DESC;
+```
+
+#### 2.6 ORDER BY และ LIMIT
+- ORDER BY - เรียงลำดับผลลัพธ์
+- LIMIT/OFFSET - จำกัดจำนวนแถว
+
+#### 2.7 JOIN - เชื่อมตาราง
+| JOIN Type | คำอธิบาย |
+|-----------|----------|
+| INNER JOIN | แสดงเฉพาะแถวที่ตรงกัน |
+| LEFT JOIN | แสดงทั้งหมดจากตารางซ้าย |
+| RIGHT JOIN | แสดงทั้งหมดจากตารางขวา |
+| CROSS JOIN | Cartesian Product |
+| SELF JOIN | Join ตารางกับตัวเอง |
+| NATURAL JOIN | Join อัตโนมัติจากชื่อคอลัมน์ |
+
+#### 2.8 ลำดับการทำงานของ SQL
+```
+FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT
+```
+
+#### 2.9 Subquery - คำสั่ง SELECT ซ้อน
+```sql
+SELECT customerName
+FROM customers
+WHERE customerNumber IN (
+    SELECT customerNumber FROM orders
+    WHERE YEAR(orderDate) = 2023
+);
+```
+
+#### 2.10 COALESCE - จัดการ NULL
+- แทนค่า NULL ด้วยค่า default
+- รวมข้อมูลจากหลายคอลัมน์
+
+#### 2.11 Set Operations
+- **UNION** - รวมและตัดซ้ำ
+- **INTERSECT** - เฉพาะที่อยู่ทั้งสอง
+- **EXCEPT** - อยู่ในแรกแต่ไม่ในที่สอง
+
+#### 2.12 Transaction - ธุรกรรมข้อมูล
+- **BEGIN** - เริ่ม transaction
+- **COMMIT** - บันทึกการเปลี่ยนแปลง
+- **ROLLBACK** - ยกเลิกการเปลี่ยนแปลง
+
+---
+
+## 🚀 การเริ่มต้นใช้งาน
+
+### 1. อ่านไฟล์ตามลำดับ
+
+1. **เริ่มต้นที่**: [01-basic-operations.md](01-basic-operations.md) - เรียนรู้พื้นฐานพีชคณิตเชิงสัมพันธ์
+2. **ต่อด้วย**: [02-sql-dml-advanced.md](02-sql-dml-advanced.md) - เจาะลึก SQL DML
+
+### 2. ติดตั้ง Prerequisites
+
+1. **PostgreSQL** ([ดาวน์โหลด](https://www.postgresql.org/download/))
+2. **PostGIS Extension** (ถ้าต้องการทำงานกับข้อมูลเชิงพื้นที่)
+
+### 3. Database Setup
+
+#### สำหรับส่วนที่ 1: Basic Operations
+
+```sql
+CREATE SCHEMA IF NOT EXISTS demo;
+SET search_path TO demo;
+-- สร้างตาราง student, course, enroll ตามที่ระบุในเอกสาร
+```
+
+#### สำหรับส่วนที่ 2: SQL DML
+
+```sql
+-- ดาวน์โหลดจาก: https://luckkrit.github.io/cos3103/sql/postgresql-classicmodels.sql
+-- แล้ว execute ไฟล์ SQL
 SET search_path TO public, classicmodels;
 ```
 
-#### 3. Set Search Path
-```sql
-SET search_path TO public, classicmodels;
-```
+### Database Schema
 
-## Database Schema Overview
-
-The **Classic Models** database contains 8 main tables:
+**Classic Models Database** มี 8 ตารางหลัก:
 
 | Table | Purpose |
 |-------|---------|
-| **Customers** | Stores customer information |
-| **Products** | Stores product/car model details |
-| **ProductLines** | Contains product line categories |
-| **Orders** | Stores sales orders |
-| **OrderDetails** | Contains individual line items per order |
-| **Payments** | Records customer payments |
-| **Employees** | Stores employee and organizational structure |
-| **Offices** | Stores sales office locations |
+| **customers** | ข้อมูลลูกค้า |
+| **products** | ข้อมูลสินค้า/รุ่นรถ |
+| **productLines** | หมวดหมู่สินค้า |
+| **orders** | คำสั่งซื้อ |
+| **orderDetails** | รายละเอียดแต่ละรายการในคำสั่งซื้อ |
+| **payments** | ข้อมูลการชำระเงิน |
+| **employees** | ข้อมูลพนักงาน |
+| **offices** | สาขา/สำนักงาน |
 
 ---
 
-## SQL Query Fundamentals
+## 💡 Tips
 
-### Query Execution Order (Important!)
+1. **ลำดับการทำงาน SQL**: จำ FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY
+2. **WHERE vs HAVING**: ใช้ WHERE กรองแถว, HAVING กรองกลุ่ม
+3. **JOIN**: ใช้ ON เมื่อกำหนดเงื่อนไขเอง, ใช้ USING เมื่อชื่อคอลัมน์เหมือนกัน
+4. **Aggregate Functions**: ต้องใช้ร่วมกับ GROUP BY ถ้าเลือกคอลัมน์อื่นด้วย
+5. **DISTINCT vs GROUP BY**: DISTINCT ง่ายกว่าแต่ GROUP BY ยืดหยุ่นกว่า
 
-SQL queries are processed in this order:
+---
 
-1. **FROM** - Identify the table(s)
-2. **JOIN** - Combine tables
-3. **WHERE** - Filter rows
-4. **GROUP BY** - Organize data into groups
-5. **HAVING** - Filter groups
-6. **SELECT** - Choose columns
-7. **ORDER BY** - Sort results
+## 🔗 เอกสารอ้างอิง
 
---
-
-## References
-
+- [COS3103 Database Course - SQL DML](https://luckkrit.github.io/cos3103/slides/2_68/sql_dml)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [SQL String Functions](https://www.postgresql.org/docs/18/functions-string.html)
-- [SQL Official Tutorial](https://www.w3schools.com/sql/)
-- [COS3103 Database Course Slides](https://luckkrit.github.io/cos3103/slides/2_68/sql_dml)
+- [PostgreSQL String Functions](https://www.postgresql.org/docs/current/functions-string.html)
+- [W3Schools SQL Tutorial](https://www.w3schools.com/sql/)
+
+### Database Downloads
+- **Classic Models Schema**: [postgresql-classicmodels.sql](https://luckkrit.github.io/cos3103/sql/postgresql-classicmodels.sql)
+- **PostgreSQL**: [Download](https://www.postgresql.org/download/)
 
 ---
 
-## Database Download Links
-
-- **Classic Models Schema:** [postgresql-classicmodels.sql](https://luckkrit.github.io/cos3103/sql/postgresql-classicmodels.sql)
-- **PostgreSQL:** [PostgreSQL Download](https://www.postgresql.org/download/)
+**หมายเหตุ**: Lab นี้เป็นส่วนหนึ่งของวิชา Database ชั้นปีที่ 3 เทอม 2

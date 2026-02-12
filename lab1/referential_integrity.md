@@ -324,82 +324,84 @@ INSERT INTO student (sid, sname, gradyear, majorid) VALUES
 (8, 'pat', 2004, 20),
 (9, 'lee', 2004, 10);
 ```
+### ทดสอบที่ตาราง Student
 1) ลบ sid = 5,7
-
-    **Result** Delete ได้เหมือนตอน no action
-
------
-
-2) Try update sid =1 with majored = 40
-
-    **Result** update ไม่ได้เพราะเหตุผลเดิม
-
--------
-
-3) Try update sid =1 with majored = 20
-
-    **Result** update ได้เหมือนตอน no action
-
-----
-
-### Table Dept
-1. Delete : Did = 10
 ```sql
-DELETE FROM dept WHERE did = 10;
-select * from dept;
+DELETE FROM student WHERE sid IN (5,7);
 SELECT * FROM student;
 ```
-**Result**
-- dept did 30 ถูกลบออกไป 
-
-![alt text](img/set_null1.png)
-
-- student sid 30 -> ถูกลบออกไปด้วย (lee หายไป)
-
-![alt text](img/cascade1.png)
+**ผลลัพธ์**: Delete ได้เหมือนตอน no action
 
 ---
 
-2. Update :Did 30
+2) Try update sid = 1 with majorid = 40
 ```sql
-UPDATE dept  SET did = 31 WHERE did = 30;
-select * from dept;
+UPDATE student SET majorid = 40 WHERE sid = 1;
+-- ERROR: Key (majorid)=(40) is not present in table "dept".
 ```
-**Result** did ถูก update 
+**ผลลัพธ์**: update ไม่ได้เพราะเหตุผลเดิม
 
-----
+---
 
-3. Update Did 20 -> 21
+3) Try update sid = 1 with majorid = 20
 ```sql
-UPDATE dept  SET did = 21 WHERE did = 20;
+UPDATE student SET majorid = 20 WHERE sid = 1;
 SELECT * FROM student;
 ```
-**Result**
-- dept update did ทั้ง 2 record
+**ผลลัพธ์**: update ได้เหมือนตอน no action
 
-![alt text](img/set_null3.png)
+---
 
-- student ที่เหลืออยูจะถูก update ตาม dept
+### ทดสอบที่ตาราง Dept
+1) Delete: Did = 10
+```sql
+DELETE FROM dept WHERE did = 10;
+SELECT * FROM dept;
+SELECT * FROM student;
+```
+**ผลลัพธ์**
+- dept did 10 ถูกลบออกไป 
+- student ที่มี majorid=10 ถูกลบออกไปด้วย (joe และ lee หายไป)
 
-![alt textimg/](img/cascade2.png)
+![cascade – student หลังลบแผนก 10](img/cascade1.png)
 
-----------
+---
 
-4. Try delete did 31,20
+2) Update: Did 30 → 31
+```sql
+UPDATE dept SET did = 31 WHERE did = 30;
+SELECT * FROM dept;
+```
+**ผลลัพธ์**: did ถูก update เป็น 31
+
+---
+
+3) Update: Did 20 → 21
+```sql
+UPDATE dept SET did = 21 WHERE did = 20;
+SELECT * FROM dept;
+SELECT * FROM student;
+```
+**ผลลัพธ์**
+- dept อัปเดต did จาก 20 → 21
+- student ที่มี majorid=20 จะถูกอัปเดตเป็น 21 ตาม dept
+
+![cascade – student อัปเดตตาม](img/cascade2.png)
+
+---
+
+4) Try delete did 31, 21
 ```sql
 DELETE FROM dept WHERE did = 31;
 DELETE FROM dept WHERE did = 21;
 SELECT * FROM dept;
 SELECT * FROM student;
 ```
-**Result**
+**ผลลัพธ์**
 - dept ถูก delete 2 record จนหมด
-
-![alt text](img/set_null5.png)
-
 - student ถูกลบออกไปตาม dept
 
-![alt text](img/cascade3.png)
+![cascade – student ถูกลบตาม](img/cascade3.png)
 
 สรุป CASCADE:
 - ลบแม่ → ลบลูกที่อ้างอิงทันที
